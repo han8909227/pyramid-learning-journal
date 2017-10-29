@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <title>Lab 5</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="SACSS/style.css">
+
+  <head>
+    <h1>Welcome to My Blog, where unicorns are borned </h1>
+  </head>
+
+
+    <script id="article-template" type="text/x-handlebars-template">
+      <article class="clearfix" data-author="{{author}}" data-category="{{category}}">
+        <header>
+          <h1>{{title}}</h1>
+          <div class="byline">
+            By <address><a href="{{authorUrl}}">{{author}}</a></address>
+            {{publishStatus}}
+          </div>
+        </header>
+        <section class="article-body">{{{body}}}</section>
+        <a href="#" class="read-on">Read on &rarr;</a>
+      </article>
+    </script>
+  </head>
+
+  <body>
+      <ul class = "articles">
+        <li><h2> Title: Journal 1</h2></li>
+        <li><h3> Create Date: Monday </h3></li>
+      </ul>
+      <ul class = "articles">
+        <li><h2> Title: Journal 2</h2></li>
+        <li><h3> Create Date: Tuesday </h3></li>
+      </ul>
+      <ul class = "articles">
+        <li><h2> Title: Journal 3</h2></li>
+        <li><h3> Create Date: Wedesday </h3></li>
+      </ul>
+      <ul class = "articles">
+        <li><h2> Title: Journal 4</h2></li>
+        <li><h3> Create Date: Thursday </h3></li>
+      </ul>
+      <ul class = "articles">
+        <li><h2> Title: Journal 5</h2></li>
+        <li><h3> Create Date: Friday </h3></li>
+      </ul>
+    </body>
+</html>
