@@ -7,7 +7,7 @@ def list_view(request):
         return Response(fn.read())
 
 
-def detail_view(request):
+def update_view(request):
     """View of single entry."""
     with open('learning_journal/templates/HB-mockups/edit.html', 'r') as fn:
         return Response(fn.read())
@@ -19,7 +19,7 @@ def create_view(request):
         return Response(fn.read())
 
 
-def update_view(request):
+def detail_view(request):
     """."""
     with open('learning_journal/data/entry.html', 'r') as fn:
         return Response(fn.read())
