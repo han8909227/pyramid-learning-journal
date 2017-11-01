@@ -8,7 +8,7 @@ from ..data import list_journal
 def list_view(request):
     """."""
     return {
-        "title": "Expense List",
+        "title": "List of my journals:",
         "journal": list_journal.Journals
     }
 
@@ -21,7 +21,7 @@ def detail_view(request):
         raise HTTPNotFound
     single_journal = list(filter(lambda x: x['id'] == journal_id, list_journal.Journals))[0]
     return {
-        'ID': journal_id,
+        'title': 'Single Entry View',
         'Journal': single_journal
     }
 
