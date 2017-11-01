@@ -7,7 +7,7 @@
     <nav>
         <li><a href="{{ request.route_url('list_view') }}">Home</a></li>
     </nav>
-    <h2>Journal Entry from ID: {{ ID }}</h2>
+    <h2>{{ title }}</h2>
     {% block content %}{% endblock %}
 </body>
 </html>
