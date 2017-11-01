@@ -1,26 +1,42 @@
-from pyramid.response import Response
+"""Default."""
+from pyramid.view import view_config
+from pyramid.httpexceptions import HTTPNotFound
+from ..data import list_journal
 
 
+@view_config(route_name='list_view', renderer='learning_journal:templates/HB-mockups/index.jinja2')
 def list_view(request):
-    """View of the indexes."""
-    with open('learning_journal/templates/HB-mockups/index.html', 'r') as fn:
-        return Response(fn.read())
+    """."""
+    return {
+        "title": "Expense List",
+        "journal": list_journal.Journals
+    }
 
 
-def update_view(request):
-    """View of single entry."""
-    with open('learning_journal/templates/HB-mockups/edit.html', 'r') as fn:
-        return Response(fn.read())
-
-
-def create_view(request):
-    """Create a new entry."""
-    with open('learning_journal/templates/HB-mockups/create.html', 'r') as fn:
-        return Response(fn.read())
-
-
+@view_config(route_name='detail_view', renderer="learning_journal:templates/HB-mockups/detail.jinja2")
 def detail_view(request):
     """."""
-    with open('learning_journal/data/entry.html', 'r') as fn:
-        return Response(fn.read())
+    journal_id = int(request.matchdict['id'])
+    if journal_id < 0 or journal_id > len(list_journal.Journals):
+        raise HTTPNotFound
+    single_journal = list(filter(lambda x: x['id'] == journal_id, list_journal.Journals))[0]
+    return {
+        'ID': journal_id,
+        'Journal': single_journal
+    }
 
+
+@view_config(route_name='update_view', renderer="learning_journal:templates/HB-mockups/edit.jinja2")
+def update_view(requset):
+    """."""
+    return {
+
+    }
+
+
+@view_config(route_name='create_view', renderer="learning_journal:templates/HB-mockups/create.jinja2")
+def create_view(requset):
+    """."""
+    return {
+
+    }
