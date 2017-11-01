@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <body>
+
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
+      <div class="container">
+        <a class="navbar-brand" href="index.html">Start Bootstrap</a>
+        <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+          Menu
+          <i class
+          ="fa fa-bars"></i>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarResponsive">
+          <ul class="navbar-nav ml-auto">
+            <li class="nav-item">
+              <a class="nav-link" href="/">Home</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/journal/new-entry">New Entry</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/journal/1/edit-entry">Edit</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+{% extends "layout.jinja2" %}
+
+{% block content %}
+<table>
+    <tr>
+        <th>Journal ID</th>
+        <th>Title</th>
+        <th>Date</th>
+        <th>Body</th>
+    </tr>
+    {% for journal in journal %}
+    <tr>
+        <td>{{ journal.ID }}</td>
+        <td>{{ journal.title}}</td>
+        <td>{{ journal.date }}</td>
+        <td>{{ journal.body}}</td>
+        <td><a href="{{ request.route_url('detail_view', id=journal.id) }}">See Journal</a></td>
+    </tr>
+    {% endfor %}
+</table>
+{% endblock %}
+
+  </body>
+
+</html>
