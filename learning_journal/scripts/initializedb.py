@@ -13,8 +13,7 @@ from ..models.meta import Base
 from ..models import (
     get_engine,
     get_session_factory,
-    get_tm_session,
-    )
+    get_tm_session)
 from ..models import MyModel
 from learning_journal.data.list_journal import Journals
 
