@@ -7,8 +7,6 @@ from sqlalchemy import (
 )
 
 from .meta import Base
-from datetime import datetime
-
 
 
 class MyModel(Base):

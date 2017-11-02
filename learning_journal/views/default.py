@@ -23,7 +23,6 @@ def detail_view(request):
     count = request.dbsession.query(MyModel).count()
     if not (0 < journal_id < count):
         raise HTTPNotFound
-    # single_journal = list(filter(lambda x: x['id'] == journal_id, list_journal.Journals))[0]
     return {
         'title': 'Single Entry View',
         'Journal': single_journal.to_dict()
