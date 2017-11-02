@@ -1,43 +1,18 @@
-<!DOCTYPE html>
-<html lang="en">
 
+{% extends "layout.jinja2" %}
 
-  <body>
+{% block content %}
+ <form id="new-form">
+    <label>
+      <input type="text" id="article-title" placeholder="Article title" required/>
+    </label>
+    <label><textarea id="article-body" rows="8" cols="40" placeholder="Type your article here!!!" required></textarea>
+    </label><br />
+    <label><input type="text" id="article-author" placeholder="Author Name" required />
+    </label><br />
+    <label><input type="text" id="article-category" placeholder="Category" required />
+    </label><br />
 
-    <!-- Navigation -->
-    <nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
-      <div class="container">
-        <a class="navbar-brand" href="index.html">Start Bootstrap</a>
-        <div class="collapse navbar-collapse" id="navbarResponsive">
-          <ul class="navbar-nav ml-auto">
-            <li class="nav-item">
-              <a class="nav-link" href="/">Home</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="/journal/1/edit-entry">Edit</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="/journal/new-entry">New Entry</a>
-            </li>
-          </ul>
-        </div>
-      </div>
-    </nav>
+  </form>
+{% endblock %}
 
-
-  <section id="write">
-    <h1>Create New Article</h1>
-    <form id="new-form">
-      <label>
-        <input type="text" id="article-title" placeholder="Article title" required/>
-      </label>
-      <label><textarea id="article-body" rows="8" cols="40" placeholder="Type your article here!!!" required></textarea>
-      </label><br />
-      <label><input type="text" id="article-author" placeholder="Author Name" required />
-      </label><br />
-      <label><input type="text" id="article-category" placeholder="Category" required />
-      </label><br />
-
-    </form>
-  </section>
-</body>

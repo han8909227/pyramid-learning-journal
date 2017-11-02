@@ -1,15 +1,17 @@
 """Default."""
 from pyramid.view import view_config
 from pyramid.httpexceptions import HTTPNotFound
-from learning_journal.data import list_journal
+from learning_journal.models import MyModel
 
 
 @view_config(route_name='list_view', renderer='learning_journal:templates/HB-mockups/index.jinja2')
 def list_view(request):
     """Return home page."""
+    journals = request.dbsession.query(MyModel).all()
+    journals = [journal.to_dict() for journal in journals]
     return {
         "title": "List of my journals:",
-        "journal": list_journal.Journals
+        "journal": journals
     }
 
 
@@ -17,12 +19,13 @@ def list_view(request):
 def detail_view(request):
     """Return detail view of journal with the input id."""
     journal_id = int(request.matchdict['id'])
-    if journal_id < 0 or journal_id > len(list_journal.Journals):
+    single_journal = request.dbsession.query(MyModel).get(journal_id)
+    count = request.dbsession.query(MyModel).count()
+    if not (0 < journal_id < count):
         raise HTTPNotFound
-    single_journal = list(filter(lambda x: x['id'] == journal_id, list_journal.Journals))[0]
     return {
         'title': 'Single Entry View',
-        'Journal': single_journal
+        'Journal': single_journal.to_dict()
     }
 
 

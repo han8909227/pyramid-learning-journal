@@ -1,21 +1,7 @@
-<!DOCTYPE html>
-<html lang="en">
 
-<nav>
-  <ul class="navbar-nav ml-auto">
-    <li class="nav-item">
-      <a class="nav-link" href="/">Home</a>
-    </li>
-    <li class="nav-item">
-      <a class="nav-link" href="/journal/1/edit-entry">Edit</a>
-    </li>
-    <li class="nav-item">
-      <a class="nav-link" href="/journal/new-entry">New Entry</a>
-    </li>
-  </ul>
-</nav>
+{% extends "layout.jinja2" %}
 
-<body>
+{% block content %}
   <section>
     <h1>Edit journal</h1>
     <form>
@@ -29,13 +15,11 @@
     </form>
   </section>
 
-  <br/>
   <h1>Journal 1</h1>
   <ul class = "articles">
     <li><h2> Title: Journal 1</h2></li>
     <li><h3> Create Date: Today </h3></li>
     <li><p> Pre-display of the contents of the journal being edit </p></li>
   </ul>
-</body>
-</html>
+{% endblock %}
 
