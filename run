@@ -1,4 +1,5 @@
 #!/bin/bash
 set -e
+initdb development.ini
 python setup.py develop
 python runapp.py
