@@ -1,5 +1,5 @@
 #!/bin/bash
 set -e
-initdb development.ini
 python setup.py develop
+initdb development.ini
 python runapp.py
