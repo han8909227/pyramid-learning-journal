@@ -13,7 +13,7 @@
     <tr>
         <td>{{ journal.ID }}</td>
         <td>{{ journal.title}}</td>
-        <td>{{ journal.date }}</td>
+        <td>{{ journal.creation_date}}</td>
         <td>{{ journal.body}}</td>
         <td><a href="{{ request.route_url('detail_view', id=journal.id) }}">See Journal</a></td>
     </tr>
