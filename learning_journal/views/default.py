@@ -36,7 +36,7 @@ def create_view(request):
     if request.method == 'GET':
         return {}
     if request.method == 'POST':
-        if not all([field in request.POST for field in ['title', 'body', 'creation_date']]):
+        if not all(field in request.POST for field in ['title', 'body', 'creation_date']):
             raise HTTPBadRequest
         count = request.dbsession.query(MyModel).count()
         new_journal = MyModel(

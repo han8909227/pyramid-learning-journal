@@ -11,7 +11,7 @@ from datetime import datetime
 from webtest.app import AppError
 from pyramid.httpexceptions import HTTPNotFound, HTTPFound, HTTPBadRequest
 from faker import Faker
-from learning_journal.views.default import list_view, detail_view, update_view, create_view
+from learning_journal.views.default import list_view, detail_view
 
 
 @pytest.fixture(scope='session')
@@ -235,3 +235,10 @@ def test_create_method_return_httpnotfound_with_no_var(testapp):
     """Assert if a http not found error(raised by apperror) is popped from invalid post req."""
     with pytest.raises(AppError):
         testapp.post('/journal/new-entry', {})
+
+
+# def test_1(testapp):
+#     """Assert if a http not found error(raised by apperror) is popped from invalid post req."""
+#     response = testapp.post('/journal/new-entry', {})
+#     import pdb; pdb.set_trace()
+#     assert response == 0
