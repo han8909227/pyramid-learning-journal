@@ -1,25 +1,21 @@
-
 {% extends "layout.jinja2" %}
 
 {% block content %}
-  <section>
-    <h1>Edit journal</h1>
-    <form>
-      <label>
-        <input type="text" placeholder="edit title to be edit" required/>
-      </label>
-      <label><textarea rows="8" cols="40" placeholder="Type your body here!!!" required></textarea>
-      </label><br />
-      <label><input type="text" placeholder="Author Name" required />
-      </label>
-    </form>
-  </section>
-
-  <h1>Journal 1</h1>
-  <ul class = "articles">
-    <li><h2> Title: Journal 1</h2></li>
-    <li><h3> Create Date: Today </h3></li>
-    <li><p> Pre-display of the contents of the journal being edit </p></li>
-  </ul>
+<form method="POST">
+    <table>
+        <tr>
+            <td><label for="title">Title</label></td>
+            <td><input type="text" name="title" value="{{ journal.title }}" /></td>
+        </tr>
+        <tr>
+            <td><label for="body">Amount</label></td>
+            <td><input type="text" name="body" value="{{ journal.body }}"/></td>
+        </tr>
+        <tr>
+            <td><label for="createion_date">Written Date</label></td>
+            <td><input type="date" name="createion_date" format="mm/dd/yyyy" value="{{ journal.creation_date }}"/></td>
+        </tr>
+        <tr><td></td><td><input type="submit" value="Edit Journal"></td></tr>
+    </table>
+</form>
 {% endblock %}
-
