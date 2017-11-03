@@ -19,15 +19,15 @@ requires = [
     'transaction',
     'zope.sqlalchemy',
     'waitress',
-    'psycopg2',
-    'pytest',
-    'webtest'
+    'psycopg2'
 ]
 
 tests_require = [
     'WebTest >= 1.3.1',  # py3 compat
     'pytest',
     'pytest-cov',
+    'webtest',
+    'faker'
 ]
 
 setup(
