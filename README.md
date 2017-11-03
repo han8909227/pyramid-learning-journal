@@ -1,6 +1,6 @@
 # pyramid-learning-journal
 
-
+"""
 
 ---------- coverage: platform linux2, python 2.7.13-final-0 ----------
 Name                      Stmts   Miss  Cover   Missing
@@ -20,3 +20,6 @@ views/default.py             18      1    94%   25
 views/notfound.py             4      2    50%   6-7
 -------------------------------------------------------
 TOTAL                       220     30    86%
+
+
+"""
