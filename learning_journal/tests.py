@@ -107,20 +107,6 @@ def test_detail_view_shows_journal_detail(dummy_request, new_journal):
     assert response['Journal'] == new_journal.to_dict()
 
 
-def test_create_view_response():
-    """Assert if the create view request returns a valid response."""
-    req = DummyRequest()
-    response = create_view(req)
-    assert response['for_test'] == 'for_test'
-
-
-def test_update_view_response():
-    """Assert if the request returns a valid response."""
-    req = DummyRequest()
-    response = update_view(req)
-    assert response['for_test'] == 'for_test'
-
-
 @pytest.fixture(scope="session")
 def testapp(request):
     """Initialte teh test app."""
@@ -190,3 +176,25 @@ def test_detail_route_with_journal_detail(testapp, fill_the_db):
     response = testapp.get("/journal/1")
     assert 'ID: 1' in response.ubody
 
+
+def test_create_view_successful_post_redirects_home(testapp):
+    """."""
+    journal_info = {
+        'title': 'testing',
+        'body': 'testing_body',
+        'creation_date': '2017-11-02'
+    }
+    response = testapp.post("/journal/new-entry", journal_info)
+    assert response.location == 'http://localhost/'
+
+
+# def test_create_view_successful_post_actually_shows_home_page(testapp):
+#     """."""
+#     expense_info = {
+#         "title": "Booze",
+#         "amount": 88.50,
+#         "due_date": '2017-11-02'
+#     }
+#     response = testapp.post("/journal/new-expense", expense_info)
+#     next_page = response.follow()
+#     assert "Booze" in next_page.ubody
