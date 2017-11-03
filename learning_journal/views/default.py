@@ -31,26 +31,27 @@ def detail_view(request):
 
 
 @view_config(route_name='create_view', renderer="learning_journal:templates/HB-mockups/create.jinja2")
-def create_view(requset):
+def create_view(request):
     """Create a new journal entry, validate it first before putting into db, return home pg."""
-    if requset.method == 'GET':
+    if request.method == 'GET':
         return {}
-    if requset.method == 'POST':
-        if not all([field in requset.POST for field in ['id', 'title', 'body', 'creation_date']]):
+    if request.method == 'POST':
+        if not all([field in request.POST for field in ['title', 'body', 'creation_date']]):
             raise HTTPBadRequest
+        count = request.dbsession.query(MyModel).count()
         new_journal = MyModel(
-            id=requset.POST['id'],
-            title=requset.POST['title'],
-            body=requset.POST['body'],
-            creation_date=requset.POST['creation_date']
+            id=count + 1,
+            title=request.POST['title'],
+            body=request.POST['body'],
+            creation_date=request.POST['creation_date']
         )
-        requset.dbsession.add(new_journal)
-        return HTTPFound(requset.route_url('list_view'))
+        request.dbsession.add(new_journal)
+        return HTTPFound(request.route_url('list_view'))
 
 
 @view_config(route_name='update_view', renderer="learning_journal:templates/HB-mockups/edit.jinja2")
 def update_view(request):
-    """Return the edit page."""
+    """Update content or title or date of a journal."""
     journal_id = int(request.matchdict['id'])
     journal = request.dbsession.query(MyModel).get(journal_id)
     if not journal:
@@ -61,11 +62,23 @@ def update_view(request):
             'title': 'Edit Journal',
             'journal': journal.to_dict()
         }
-
     if request.method == 'POST':
         journal.title = request.POST['title']
         journal.body = request.POST['body']
-        journal.creation_date = datetime.strptime(request.POST['creation_date'], '%Y-%m-%d')
+        if request.POST['creation_date'] != '':
+            journal.creation_date = datetime.strptime(request.POST['creation_date'], '%Y-%m-%d')
         request.dbsession.add(journal)
         request.dbsession.flush()
-        return HTTPFound(request.route_url('detail_view', id=journal_id))
+        return HTTPFound(request.route_url('detail_view', id=journal.id))
+
+
+@view_config(route_name='delete')
+def delete_expense(request):
+    """Delete a journal with given id."""
+    journal_id = int(request.matchdict['id'])
+    journal = request.dbsession.query(MyModel).get(journal_id)
+    if not journal:
+        raise HTTPNotFound
+
+    request.dbsession.delete(journal)
+    return HTTPFound(request.route_url('list_view'))
