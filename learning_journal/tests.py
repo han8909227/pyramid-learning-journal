@@ -1,34 +1,110 @@
 """Testing for pyramid server."""
+import pytest
+from pyramid import testing
 from pyramid.testing import DummyRequest
-from learning_journal.data.list_journal import Journals
-from pyramid.httpexceptions import HTTPNotFound
-from learning_journal.views.default import list_view, detail_view, create_view, update_view
+import transaction
+from learning_journal.models import (
+    MyModel,
+    get_tm_session,
+)
+from learning_journal.models.meta import Base
+from datetime import datetime
+from pyramid.httpexceptions import HTTPNotFound, HTTPFound, HTTPBadRequest
+from faker import Faker
+from learning_journal.views.default import list_view, detail_view, update_view, create_view
 
 
-# def test_list_view_return_response_obj():
-#     """Assert if the index request returns a valid response."""
-#     req = DummyRequest()
-#     response = list_view(req)
-#     assert response['journal'] == Journals
+@pytest.fixture(scope='session')
+def configuration(request):
+    """Set up a Configurator instance.
+
+    This Configurator instance sets up a pointer to the location of the
+        database.
+    It also includes the models from your app's model package.
+    Finally it tears everything down, including the in-memory SQLite database.
+
+    This configuration will persist for the entire duration of your PyTest run.
+    """
+    config = testing.setUp(settings={
+        'sqlalchemy.url': 'postgres://postgres:postgres@localhost:5432/testjournals'
+    })
+    config.include("learning_journal.models")
+    config.include("learning_journal.routes")
+
+    def teardown():
+        testing.tearDown()
+
+    request.addfinalizer(teardown)
+    return config
 
 
-# def test_detail_view_response():
-#     """Assert if the detail view request returns a valid response."""
-#     req = DummyRequest()
-#     for num in range(10):
-#         req.matchdict['id'] = num + 1
-#         response = detail_view(req)
-#         assert response['Journal'] == Journals[num]
+@pytest.fixture
+def db_session(configuration, request):
+    """Create a session for interacting with the test database.
+
+    This uses the dbsession_factory on the configurator instance to create a
+    new database session. It binds that session to the available engine
+    and returns a new session for every call of the dummy_request object.
+    """
+    SessionFactory = configuration.registry["dbsession_factory"]
+    session = SessionFactory()
+    engine = session.bind
+    Base.metadata.drop_all(engine)
+    Base.metadata.create_all(engine)
+
+    def teardown():
+        session.transaction.rollback()
+        Base.metadata.drop_all(engine)
+
+    request.addfinalizer(teardown)
+    return session
 
 
-# def test_detail_view_error():
-#     """Test detail view returns an error with out of bound request."""
-#     req = DummyRequest()
-#     req.matchdict['id'] = 100
-#     try:
-#         detail_view(req)
-#     except HTTPNotFound:
-#         pass
+@pytest.fixture
+def dummy_request(db_session):
+    """Instantiate a fake HTTP Request, complete with a database session.
+
+    This is a function-level fixture, so every new request will have a
+    new database session.
+    """
+    return testing.DummyRequest(dbsession=db_session)
+
+
+@pytest.fixture
+def new_journal():
+    """Provide a fixture for one journal."""
+    new = MyModel(
+        id=1,
+        title=u'test journal',
+        body=u'test_body',
+        creation_date=datetime.now()
+    )
+    return new
+
+
+def test_index_returns_list_of_journals_in_dict(dummy_request):
+    """Test index return list of journals."""
+    response = list_view(dummy_request)
+    assert 'journal' in response
+    assert isinstance(response['journal'], list)
+
+
+def test_journal_exists_and_is_in_list(dummy_request, new_journal):
+    """Test journal exists in the list."""
+    dummy_request.dbsession.add(new_journal)
+    # dummy_request.dbsession.flush()
+    # journal = new_journal()
+    response = list_view(dummy_request)
+    assert new_journal.to_dict() in response['journal']
+
+
+def test_detail_view_shows_journal_detail(dummy_request, new_journal):
+    """Test detail view show journal details."""
+    dummy_request.dbsession.add(new_journal)
+    dummy_request.dbsession.commit()
+    dummy_request.matchdict['id'] = 1
+    response = detail_view(dummy_request)
+    assert response['Journal'] == new_journal.to_dict()
 
 
 def test_create_view_response():
@@ -43,4 +119,74 @@ def test_update_view_response():
     req = DummyRequest()
     response = update_view(req)
     assert response['for_test'] == 'for_test'
+
+
+@pytest.fixture(scope="session")
+def testapp(request):
+    """Initialte teh test app."""
+    from webtest import TestApp
+    from pyramid.config import Configurator
+
+    def main():
+        settings = {
+            'sqlalchemy.url': 'postgres://postgres:postgres@localhost:5432/testjournals'
+        }  # points to a database
+        config = Configurator(settings=settings)
+        config.include('pyramid_jinja2')
+        config.include('learning_journal.routes')
+        config.include('learning_journal.models')
+        config.scan()
+        return config.make_wsgi_app()
+
+    app = main()
+
+    SessionFactory = app.registry["dbsession_factory"]
+    engine = SessionFactory().bind
+    Base.metadata.create_all(bind=engine)  # builds the tables
+
+    def tearDown():
+        Base.metadata.drop_all(bind=engine)
+
+    request.addfinalizer(tearDown)
+    return TestApp(app)
+
+
+FAKE = Faker()
+JOURNALS = []
+for i in range(9):
+    journals = MyModel(
+        id=i,
+        title=FAKE.file_name(),
+        body=FAKE.paragraph(),
+        creation_date=FAKE.date_time()
+    )
+    JOURNALS.append(journals)
+
+
+@pytest.fixture(scope="session")
+def fill_the_db(testapp):
+    """Fill the db with fake journal entries."""
+    SessionFactory = testapp.app.registry["dbsession_factory"]
+    with transaction.manager:
+        dbsession = get_tm_session(SessionFactory, transaction.manager)
+        dbsession.add_all(JOURNALS)
+
+
+def test_home_route_has_table(testapp):
+    """Test route has table."""
+    response = testapp.get("/")
+    assert len(response.html.find_all('table')) == 1
+    assert len(response.html.find_all('tr')) == 1
+
+
+def test_home_route_with_journals_has_rows(testapp, fill_the_db):
+    """Test home route has rows."""
+    response = testapp.get("/")
+    assert len(response.html.find_all('tr')) == 10
+
+
+def test_detail_route_with_journal_detail(testapp, fill_the_db):
+    """Test if detail papge has proper response.."""
+    response = testapp.get("/journal/1")
+    assert 'ID: 1' in response.ubody
 

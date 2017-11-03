@@ -21,7 +21,7 @@ def detail_view(request):
     journal_id = int(request.matchdict['id'])
     single_journal = request.dbsession.query(MyModel).get(journal_id)
     count = request.dbsession.query(MyModel).count()
-    if not (0 < journal_id < count):
+    if not (0 < journal_id <= count):
         raise HTTPNotFound
     return {
         'title': 'Single Entry View',
