@@ -1,7 +1,7 @@
 # pyramid-learning-journal
 
-
 STEP 3:
+
 ---------- coverage: platform linux2, python 2.7.13-final-0 ----------
 Name                      Stmts   Miss  Cover   Missing
 -------------------------------------------------------
