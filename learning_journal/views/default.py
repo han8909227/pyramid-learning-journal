@@ -55,7 +55,7 @@ def update_view(request):
     journal_id = int(request.matchdict['id'])
     journal = request.dbsession.query(MyModel).get(journal_id)
     if not journal:
-        raise HTTPFound
+        raise HTTPNotFound
 
     if request.method == 'GET':
         return{
@@ -63,8 +63,10 @@ def update_view(request):
             'journal': journal.to_dict()
         }
     if request.method == 'POST':
-        journal.title = request.POST['title']
-        journal.body = request.POST['body']
+        if request.POST['title'] != '':
+            journal.title = request.POST['title']
+        if request.POST['body'] != '':
+            journal.body = request.POST['body']
         if request.POST['creation_date'] != '':
             journal.creation_date = datetime.strptime(request.POST['creation_date'], '%Y-%m-%d')
         request.dbsession.add(journal)
