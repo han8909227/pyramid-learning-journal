@@ -1,7 +1,6 @@
 """Testing for pyramid server."""
 import pytest
 from pyramid import testing
-from pyramid.testing import DummyRequest
 import transaction
 from learning_journal.models import (
     MyModel,
@@ -9,6 +8,7 @@ from learning_journal.models import (
 )
 from learning_journal.models.meta import Base
 from datetime import datetime
+from webtest.app import AppError
 from pyramid.httpexceptions import HTTPNotFound, HTTPFound, HTTPBadRequest
 from faker import Faker
 from learning_journal.views.default import list_view, detail_view, update_view, create_view
@@ -107,20 +107,6 @@ def test_detail_view_shows_journal_detail(dummy_request, new_journal):
     assert response['Journal'] == new_journal.to_dict()
 
 
-def test_create_view_response():
-    """Assert if the create view request returns a valid response."""
-    req = DummyRequest()
-    response = create_view(req)
-    assert response['for_test'] == 'for_test'
-
-
-def test_update_view_response():
-    """Assert if the request returns a valid response."""
-    req = DummyRequest()
-    response = update_view(req)
-    assert response['for_test'] == 'for_test'
-
-
 @pytest.fixture(scope="session")
 def testapp(request):
     """Initialte teh test app."""
@@ -190,3 +176,62 @@ def test_detail_route_with_journal_detail(testapp, fill_the_db):
     response = testapp.get("/journal/1")
     assert 'ID: 1' in response.ubody
 
+
+@pytest.fixture
+def journal_info():
+    """Create a info dictionary for edit or create later."""
+    info = {
+        'title': 'testing',
+        'body': 'testing_body',
+        'creation_date': '2017-11-02'
+    }
+    return info
+
+
+@pytest.fixture
+def edit_info():
+    """Create a dict for editing purpose."""
+    info = {
+        'title': 'edited journal',
+        'body': 'I just changed the journal created in above test',
+        'creation_date': ''
+    }
+    return info
+
+
+def test_create_view_successful_post_redirects_home(testapp, journal_info):
+    """Test create view directs to same loc."""
+    response = testapp.post("/journal/new-entry", journal_info)
+    assert response.location == 'http://localhost/'
+
+
+def test_create_view_successful_post_actually_shows_home_page(testapp, journal_info):
+    """Test create view folow up with detail page."""
+    response = testapp.post("/journal/new-entry", journal_info)
+    next_page = response.follow()
+    assert "testing" in next_page.ubody
+
+
+def test_edit_method_successful_updates(testapp, edit_info):
+    """Test if content is updated successfully."""
+    response = testapp.post('/journal/1/edit-entry', edit_info)
+    next_page = response.follow()
+    assert 'edited journal' in next_page.ubody
+
+
+def test_edit_method_successful_updates_and_directs_detail_view(testapp, edit_info):
+    """Test after updating we get re-directed to detail view."""
+    response = testapp.post('/journal/1/edit-entry', edit_info)
+    assert response.location == 'http://localhost/journal/1'
+
+
+def test_edit_method_return_httpnotfound(testapp, edit_info):
+    """Assert if a http not found error(raised by apperror) is popped from invalid post req."""
+    with pytest.raises(AppError):
+        testapp.post('/journal/200/edit-entry', edit_info)
+
+
+def test_create_method_return_httpnotfound_with_no_var(testapp):
+    """Assert if a http not found error(raised by apperror) is popped from invalid post req."""
+    with pytest.raises(AppError):
+        testapp.post('/journal/new-entry', {})
