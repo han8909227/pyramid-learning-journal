@@ -11,7 +11,6 @@ from learning_journal.models.meta import Base
 from datetime import datetime
 from pyramid.httpexceptions import HTTPNotFound, HTTPFound, HTTPBadRequest
 from faker import Faker
-import random
 from learning_journal.views.default import list_view, detail_view, update_view, create_view
 
 
