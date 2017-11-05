@@ -1,43 +1,21 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends "layout.jinja2" %}
 
-
-  <body>
-
-    <!-- Navigation -->
-    <nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
-      <div class="container">
-        <a class="navbar-brand" href="index.html">Start Bootstrap</a>
-        <div class="collapse navbar-collapse" id="navbarResponsive">
-          <ul class="navbar-nav ml-auto">
-            <li class="nav-item">
-              <a class="nav-link" href="/">Home</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="/journal/1/edit-entry">Edit</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="/journal/new-entry">New Entry</a>
-            </li>
-          </ul>
-        </div>
-      </div>
-    </nav>
-
-
-  <section id="write">
-    <h1>Create New Article</h1>
-    <form id="new-form">
-      <label>
-        <input type="text" id="article-title" placeholder="Article title" required/>
-      </label>
-      <label><textarea id="article-body" rows="8" cols="40" placeholder="Type your article here!!!" required></textarea>
-      </label><br />
-      <label><input type="text" id="article-author" placeholder="Author Name" required />
-      </label><br />
-      <label><input type="text" id="article-category" placeholder="Category" required />
-      </label><br />
-
-    </form>
-  </section>
-</body>
+{% block content %}
+<form method="POST">
+    <table>
+        <tr>
+            <td><label for="title">Title</label></td>
+            <td><input type="text" name="title" required/></td>
+        </tr>
+        <tr>
+            <td><label for="body">Body</label></td>
+            <td><input type="text" name="body" required/></td>
+        </tr>
+        <tr>
+            <td><label for="creation_date">Journal Date</label></td>
+            <td><input type="date" name="creation_date" Journal Datemm/dd/yyyy" required/></td>
+        </tr>
+        <tr><td></td><td><input type="submit" value="Submit New Journal"></td></tr>
+    </table>
+</form>
+{% endblock %}
