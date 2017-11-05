@@ -1,18 +1,21 @@
-
 {% extends "layout.jinja2" %}
 
 {% block content %}
- <form id="new-form">
-    <label>
-      <input type="text" id="article-title" placeholder="Article title" required/>
-    </label>
-    <label><textarea id="article-body" rows="8" cols="40" placeholder="Type your article here!!!" required></textarea>
-    </label><br />
-    <label><input type="text" id="article-author" placeholder="Author Name" required />
-    </label><br />
-    <label><input type="text" id="article-category" placeholder="Category" required />
-    </label><br />
-
-  </form>
+<form method="POST">
+    <table>
+        <tr>
+            <td><label for="title">Title</label></td>
+            <td><input type="text" name="title" required/></td>
+        </tr>
+        <tr>
+            <td><label for="body">Body</label></td>
+            <td><input type="text" name="body" required/></td>
+        </tr>
+        <tr>
+            <td><label for="creation_date">Journal Date</label></td>
+            <td><input type="date" name="creation_date" Journal Datemm/dd/yyyy" required/></td>
+        </tr>
+        <tr><td></td><td><input type="submit" value="Submit New Journal"></td></tr>
+    </table>
+</form>
 {% endblock %}
-

@@ -19,7 +19,7 @@ requires = [
     'transaction',
     'zope.sqlalchemy',
     'waitress',
-    'psycopg2',
+    'psycopg2'
 ]
 
 tests_require = [
@@ -27,6 +27,8 @@ tests_require = [
     'pytest',
     'pytest-cov',
     'tox'
+    'webtest',
+    'faker'
 ]
 
 setup(
