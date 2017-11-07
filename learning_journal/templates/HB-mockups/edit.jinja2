@@ -1,21 +1,27 @@
+
+
 {% extends "layout.jinja2" %}
 
 {% block content %}
-<form method="POST">
-    <table>
-        <tr>
-            <td><label for="title">Title</label></td>
-            <td><input type="text" name="title" value="{{ journal.title }}" /></td>
-        </tr>
-        <tr>
-            <td><label for="body">Amount</label></td>
-            <td><input type="text" name="body" value="{{ journal.body }}"/></td>
-        </tr>
-        <tr>
-            <td><label for="creation_date">Written Date</label></td>
-            <td><input type="date" name="creation_date" format="mm/dd/yyyy" /></td>
-        </tr>
-        <tr><td></td><td><input type="submit" value="Edit Journal"></td></tr>
-    </table>
-</form>
+    <article>
+      <div class="page-header">
+        <h1>Edit Post</h1>
+      </div>
+      <form method ="POST">
+        <div class="form-group">
+          <label for="title">Title</label>
+          <textarea class="form-control" name="title" rows="1">{{ journal.title }}</textarea>
+        </div>
+        <div class="form-group">
+          <label for="exampleFormControlTextarea1">Body</label>
+          <textarea class="form-control" name="body" rows="5">{{ journal.body }}</textarea>
+        </div>
+        <div class="form-group">
+            <label for="creation_date">Written Date</label>
+            <input type="date" name="creation_date" format="mm/dd/yyyy" />
+        </div>
+        <input type="submit" value="Edit Journal">
+      </form>
+    </article>
 {% endblock %}
+

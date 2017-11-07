@@ -236,9 +236,3 @@ def test_create_method_return_httpnotfound_with_no_var(testapp):
     with pytest.raises(AppError):
         testapp.post('/journal/new-entry', {})
 
-
-# def test_1(testapp):
-#     """Assert if a http not found error(raised by apperror) is popped from invalid post req."""
-#     response = testapp.post('/journal/new-entry', {})
-#     import pdb; pdb.set_trace()
-#     assert response == 0
