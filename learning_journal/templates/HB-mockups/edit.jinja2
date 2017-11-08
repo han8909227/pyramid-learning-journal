@@ -8,6 +8,8 @@
         <h1>Edit Post</h1>
       </div>
       <form method ="POST">
+        <input type="hidden" name="csrf_token" value="{{ request.session.get_csrf_token() }}">
+
         <div class="form-group">
           <label for="title">Title</label>
           <textarea class="form-control" name="title" rows="1">{{ journal.title }}</textarea>
