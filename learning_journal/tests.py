@@ -8,7 +8,6 @@ from learning_journal.models import (
 )
 from learning_journal.models.meta import Base
 from datetime import datetime
-from webtest.app import AppError
 from faker import Faker
 from learning_journal.views.default import list_view, detail_view
 
@@ -238,14 +237,12 @@ def test_edit_method_successful_updates_and_directs_detail_view(testapp, edit_in
 
 def test_edit_method_return_httpnotfound(testapp, edit_info):
     """Assert if a http not found error(raised by apperror) is popped from invalid post req."""
-    with pytest.raises(AppError):
-        testapp.post('/journal/200/edit-entry', edit_info)
+    testapp.post('/journal/200/edit-entry', status=404)
 
 
 def test_create_method_return_httpnotfound_with_no_var(testapp):
     """Assert if a http not found error(raised by apperror) is popped from invalid post req (mt)."""
-    with pytest.raises(AppError):
-        testapp.post('/journal/new-entry', {})
+    testapp.post('/journal/new-entry', status=400)
     testapp.post('/logout')
 
 
@@ -254,8 +251,7 @@ def test_log_out_successfully_cannot_edit(testapp, edit_info, login):
     login
     testapp.post('/journal/1/edit-entry', edit_info)
     testapp.post('/logout')
-    with pytest.raises(AppError):
-        testapp.post('/journal/1/edit-entry', edit_info)
+    testapp.post('/journal/1/edit-entry', status=403)
 
 
 def test_log_out_successfully_cannot_create(testapp, journal_info, login):
@@ -263,8 +259,7 @@ def test_log_out_successfully_cannot_create(testapp, journal_info, login):
     login
     testapp.post('/journal/new-entry', journal_info)
     testapp.post('/logout')
-    with pytest.raises(AppError):
-        testapp.post('/journal/new-entry', journal_info)
+    assert testapp.post('/journal/new-entry', status=403)
 
 
 def test_no_create_journal_nav_tab_before_login(testapp):
