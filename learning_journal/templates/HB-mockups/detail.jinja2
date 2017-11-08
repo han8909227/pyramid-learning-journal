@@ -6,13 +6,17 @@
     <main class="article-content">
       <div class="page-header">
         <h1>{{ Journal.title }}</h1>
+        <h3>ID: {{Journal.id}}</h3>
       </div>
       <div class="card">
         <div class="card-body">
           <p class="card-text">{{ Journal.body }}</p>
         </div>
         <div class="card-footer text-muted">
-           {{ Journal.creation_date }} <a href="{{ request.route_url('update_view', id=Journal.id) }}" style="float: right">Edit Post</a>
+           {{ Journal.creation_date }}
+           {% if request.authenticated_userid %}
+           <a href="{{ request.route_url('update_view', id=Journal.id) }}" style="float: right">Edit Post</a>
+           {% endif %}
         </div>
       </div>
     </main>

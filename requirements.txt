@@ -27,6 +27,7 @@ prompt-toolkit==1.0.15
 ptyprocess==0.5.2
 Pygments==2.2.0
 pyramid==1.9.1
+passlib == 1.7.1
 pyramid-debugtoolbar==4.3
 pyramid-jinja2==2.7
 pyramid-mako==1.0.2

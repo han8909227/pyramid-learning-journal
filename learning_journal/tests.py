@@ -121,6 +121,7 @@ def testapp(request):
         config.include('pyramid_jinja2')
         config.include('learning_journal.routes')
         config.include('learning_journal.models')
+        config.include('learning_journal.security')
         config.scan()
         return config.make_wsgi_app()
 
@@ -139,7 +140,7 @@ def testapp(request):
 
 FAKE = Faker()
 JOURNALS = []
-for i in range(9):
+for i in range(10):
     journals = MyModel(
         id=i,
         title=FAKE.file_name(),
@@ -161,14 +162,14 @@ def fill_the_db(testapp):
 def test_home_route_has_table(testapp):
     """Test route has table."""
     response = testapp.get("/")
-    assert len(response.html.find_all('table')) == 1
-    assert len(response.html.find_all('tr')) == 1
+    assert len(response.html.find_all('body')) == 1
+    assert len(response.html.find_all('p')) == 0
 
 
 def test_home_route_with_journals_has_rows(testapp, fill_the_db):
     """Test home route has rows."""
     response = testapp.get("/")
-    assert len(response.html.find_all('tr')) == 10
+    assert len(response.html.find_all('p')) == 10
 
 
 def test_detail_route_with_journal_detail(testapp, fill_the_db):
@@ -232,7 +233,7 @@ def test_edit_method_return_httpnotfound(testapp, edit_info):
 
 
 def test_create_method_return_httpnotfound_with_no_var(testapp):
-    """Assert if a http not found error(raised by apperror) is popped from invalid post req."""
+    """Assert if a http not found error(raised by apperror) is popped from invalid post req (mt)."""
     with pytest.raises(AppError):
         testapp.post('/journal/new-entry', {})
 
