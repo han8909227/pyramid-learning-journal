@@ -9,7 +9,6 @@ from learning_journal.models import (
 from learning_journal.models.meta import Base
 from datetime import datetime
 from webtest.app import AppError
-from pyramid.httpexceptions import HTTPNotFound, HTTPFound, HTTPBadRequest
 from faker import Faker
 from learning_journal.views.default import list_view, detail_view
 
@@ -200,8 +199,19 @@ def edit_info():
     return info
 
 
-def test_create_view_successful_post_redirects_home(testapp, journal_info):
+@pytest.fixture
+def login(testapp):
+    """I will log you in, please don't hack me."""
+    secret = {
+        'username': 'hbao',
+        'password': 'secret'
+    }
+    testapp.post('/login', secret)
+
+
+def test_create_view_successful_post_redirects_home(testapp, journal_info, login):
     """Test create view directs to same loc."""
+    login
     response = testapp.post("/journal/new-entry", journal_info)
     assert response.location == 'http://localhost/'
 
@@ -236,4 +246,54 @@ def test_create_method_return_httpnotfound_with_no_var(testapp):
     """Assert if a http not found error(raised by apperror) is popped from invalid post req (mt)."""
     with pytest.raises(AppError):
         testapp.post('/journal/new-entry', {})
+    testapp.post('/logout')
 
+
+def test_log_out_successfully_cannot_edit(testapp, edit_info, login):
+    """Test if we can log out successfully and cannot edit any journal."""
+    login
+    testapp.post('/journal/1/edit-entry', edit_info)
+    testapp.post('/logout')
+    with pytest.raises(AppError):
+        testapp.post('/journal/1/edit-entry', edit_info)
+
+
+def test_log_out_successfully_cannot_create(testapp, journal_info, login):
+    """Test if we logged out successfully and cannot create any new journal."""
+    login
+    testapp.post('/journal/new-entry', journal_info)
+    testapp.post('/logout')
+    with pytest.raises(AppError):
+        testapp.post('/journal/new-entry', journal_info)
+
+
+def test_no_create_journal_nav_tab_before_login(testapp):
+    """Before login you won't see the new post tab."""
+    response = testapp.get('/')
+    assert 'New Post' not in response.ubody and 'Login' in response.ubody
+
+
+def test_create_journal_nav_tab_after_login(testapp, login):
+    """Test login in tab appears after you logged in."""
+    login
+    response = testapp.get('/')
+    assert 'New Post' in response.ubody and 'Logout' in response.ubody
+    testapp.post('/logout')
+
+
+def test_both_auth_and_unauth_user_can_access_home_pg(testapp, login):
+    """Test whether an authorized and an unauthorized user can access home route."""
+    login
+    response = testapp.get('/')
+    testapp.post('/logout')
+    response_1 = testapp.get('/')
+    assert 'Han\'s Blog' in response.ubody and response_1.ubody
+
+
+def test_both_auth_and_unauth_user_can_access_detail_pg(testapp, login):
+    """Test whether both authorized and unauthroized user can access a detail route."""
+    login
+    response = testapp.get('/journal/5')
+    testapp.post('/logout')
+    response_1 = testapp.get('/journal/5')
+    assert 'ID: 5' in response.ubody and response_1.ubody
