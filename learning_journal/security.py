@@ -5,6 +5,7 @@ from pyramid.authorization import ACLAuthorizationPolicy
 from pyramid.security import Authenticated
 from pyramid.security import Allow
 from passlib.apps import custom_app_context as pwd_context
+from pyramid.session import SignedCookieSessionFactory  # <-- include this
 
 
 class MyRoot(object):
@@ -30,7 +31,7 @@ def is_authenticated(username, password):
 def includeme(config):
     """."""
     # set up authentication
-    auth_secret = os.environ.get('AUTH_SECRET', 'itsaseekrit')
+    auth_secret = os.environ.get('AUTH_SECRET', '')
     authn_policy = AuthTktAuthenticationPolicy(
         secret=auth_secret,
         hashalg='sha512'
@@ -40,6 +41,12 @@ def includeme(config):
     # set up authorization
     authz_policy = ACLAuthorizationPolicy()
     config.set_authorization_policy(authz_policy)
-    # config.set_default_permission('secret')  # if i want every view by default to be behind a login wall
+    # config.set_default_permission('secret')
+    # if i want every view by default to be behind a login wall
     config.set_root_factory(MyRoot)
 
+    # set up CSRF token to prevent CSRF attack
+    session_secret = os.environ.get('SESSION_SECRET', '')
+    session_factory = SignedCookieSessionFactory(session_secret)
+    config.set_session_factory(session_factory)
+    config.set_default_csrf_options(require_csrf=True)
