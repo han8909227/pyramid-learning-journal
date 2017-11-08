@@ -44,5 +44,11 @@ To run the project
     env/bin/pserve development.ini
 
 ```
+## To Test
+
+If you have the testing extras installed, testing is simple. If you're in the same directory as `setup.py` type the following:
+
+```
+$ py.test
 
 
