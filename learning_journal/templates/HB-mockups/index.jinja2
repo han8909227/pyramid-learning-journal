@@ -1,23 +1,20 @@
 
+
 {% extends "layout.jinja2" %}
 
 {% block content %}
-<table>
-    <tr>
-        <th>Journal ID</th>
-        <th>Title</th>
-        <th>Date</th>
-        <th>Body</th>
-    </tr>
-    {% for journal in journal %}
-    <tr>
-        <td>{{ journal.id }}</td>
-        <td>{{ journal.title}}</td>
-        <td>{{ journal.creation_date}}</td>
-        <td>{{ journal.body}}</td>
-        <td><a href="{{ request.route_url('detail_view', id=journal.id) }}">See Journal</a></td>
-    </tr>
-    {% endfor %}
-</table>
+    <main class="article-list">
+      <div class="page-header">
+        <h1>Blog Posts</h1>
+      </div>
+      {% for journal in journal %}
+        <div class="card">
+          <div class="card-body">
+            <h4 class="card-title">{{ journal.title|upper }}</h4>
+            <p class="card-text">{{ journal.body }}</p>
+            <a href="{{ request.route_url('detail_view', id=journal.id) }}" class="btn btn-primary">Details</a>
+          </div>
+        </div>
+      {% endfor %}
+    </main>
 {% endblock %}
-

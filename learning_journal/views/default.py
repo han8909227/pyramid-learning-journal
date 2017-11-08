@@ -3,6 +3,8 @@ from pyramid.view import view_config
 from pyramid.httpexceptions import HTTPNotFound, HTTPFound, HTTPBadRequest
 from learning_journal.models import MyModel
 from datetime import datetime
+from pyramid.security import remember, forget, NO_PERMISSION_REQUIRED
+from learning_journal.security import is_authenticated
 
 
 @view_config(route_name='list_view', renderer='learning_journal:templates/HB-mockups/index.jinja2')
@@ -30,7 +32,9 @@ def detail_view(request):
     }
 
 
-@view_config(route_name='create_view', renderer="learning_journal:templates/HB-mockups/create.jinja2")
+@view_config(route_name='create_view',
+             renderer="learning_journal:templates/HB-mockups/create.jinja2",
+             permission='secret')
 def create_view(request):
     """Create a new journal entry, validate it first before putting into db, return home pg."""
     if request.method == 'GET':
@@ -49,7 +53,9 @@ def create_view(request):
         return HTTPFound(request.route_url('list_view'))
 
 
-@view_config(route_name='update_view', renderer="learning_journal:templates/HB-mockups/edit.jinja2")
+@view_config(route_name='update_view',
+             renderer="learning_journal:templates/HB-mockups/edit.jinja2",
+             permission='secret')
 def update_view(request):
     """Update content or title or date of a journal."""
     journal_id = int(request.matchdict['id'])
@@ -74,13 +80,43 @@ def update_view(request):
         return HTTPFound(request.route_url('detail_view', id=journal.id))
 
 
-@view_config(route_name='delete')
+@view_config(route_name='delete',
+             permission='secret')
 def delete_expense(request):
     """Delete a journal with given id."""
     journal_id = int(request.matchdict['id'])
     journal = request.dbsession.query(MyModel).get(journal_id)
     if not journal:
         raise HTTPNotFound
-
     request.dbsession.delete(journal)
     return HTTPFound(request.route_url('list_view'))
+
+
+@view_config(route_name='login',
+             renderer='learning_journal:templates/login.jinja2',
+             permission=NO_PERMISSION_REQUIRED)
+def login(request):
+    """Login route config function."""
+    if request.authenticated_userid:
+        return HTTPFound(request.route_url('list_view'))
+
+    if request.method == 'GET':
+        return {}
+
+    if request.method == 'POST':
+        username = request.POST['username']
+        password = request.POST['password']
+
+        if is_authenticated(username, password):
+            headers = remember(request, username)
+            return HTTPFound(request.route_url('list_view'), headers=headers)
+        return {
+            'error': 'Error: Username/Password does not match!'
+        }
+
+
+@view_config(route_name='logout')
+def logout(request):
+    """Logout route config function."""
+    headers = forget(request)
+    return HTTPFound(request.route_url('list_view'), headers=headers)

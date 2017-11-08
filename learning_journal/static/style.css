@@ -1,0 +1,26 @@
+
+article {
+    width: 50%;
+    margin: auto;
+}
+
+.card {
+    display: block;
+    margin: 1em 0em 1em 0em
+}
+
+
+.page-header {
+    display: block;
+    padding: 2em 0em 1em 2em;
+}
+
+.article-content {
+    width: 50%;
+    margin: auto;
+}
+
+.article-list {
+    width: 50%;
+    margin: auto;
+}
