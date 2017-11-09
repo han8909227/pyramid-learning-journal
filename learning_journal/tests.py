@@ -210,6 +210,12 @@ def login(testapp):
 
 
 @pytest.fixture
+def logout(testapp):
+    """I will log you out from the session."""
+    testapp.get('/logout')
+
+
+@pytest.fixture
 def csrf_token(testapp):
     """Will get the csrf token."""
     get_tk = testapp.get('/journal/new-entry')
@@ -247,69 +253,58 @@ def test_edit_method_successful_updates_and_directs_detail_view(testapp, edit_in
     assert response.location == 'http://localhost/journal/1'
 
 
-# def test_edit_method_return_httpnotfound(testapp, edit_info):
-#     """Assert if a http not found error(raised by apperror) is popped from invalid post req."""
-#     testapp.post('/journal/200/edit-entry', status=404)
+def test_edit_method_return_httpnotfound(testapp, edit_info, csrf_token):
+    """Assert if a http not found error(raised by apperror) is popped from invalid post req (mt)."""
+    try:
+        testapp.post('/journal/200/edit-entry', {'csrf_token': csrf_token})
+    except AppError as err:
+        assert '404 Not Found' in err.args[0]
 
 
 def test_create_method_return_httpnotfound_with_no_var(testapp, csrf_token):
     """Assert if a http not found error(raised by apperror) is popped from invalid post req (mt)."""
     try:
         testapp.post('/journal/new-entry', {'csrf_token': csrf_token})
-    except AppError:
-        pass
-        # testapp.post('/logout')
+    except AppError as err:
+        assert '400 Bad Request' in err.args[0]
 
 
-# def test_log_out_successfully_cannot_edit(testapp, edit_info, login):
-#     """Test if we can log out successfully and cannot edit any journal."""
-#     login
-#     testapp.post('/journal/1/edit-entry', edit_info)
-#     testapp.post('/logout')
-#     testapp.post('/journal/1/edit-entry', status=403)
+def test_no_create_journal_nav_tab_before_login(testapp, logout):
+    """Before login you won't see the new post tab."""
+    response = testapp.get('/')
+    assert 'New Post' not in response.ubody and 'Login' in response.ubody
 
 
-# def test_log_out_successfully_cannot_create(testapp, journal_info, login):
-#     """Test if we logged out successfully and cannot create any new journal."""
-#     login
-#     testapp.post('/journal/new-entry', journal_info)
-#     testapp.post('/logout')
-#     assert testapp.post('/journal/new-entry', status=403)
+def test_create_journal_nav_tab_after_login(testapp, login):
+    """Test login in tab appears after you logged in."""
+    response = testapp.get('/')
+    assert 'New Post' in response.ubody and 'Logout' in response.ubody
 
 
-# def test_no_create_journal_nav_tab_before_login(testapp):
-#     """Before login you won't see the new post tab."""
-#     response = testapp.get('/')
-#     assert 'New Post' not in response.ubody and 'Login' in response.ubody
+def test_both_auth_and_unauth_user_can_access_home_pg(testapp, logout):
+    """Test whether an authorized and an unauthorized user can access home route."""
+    response = testapp.get('/')
+    logout
+    response_1 = testapp.get('/')
+    assert 'Han\'s Blog' in response.ubody and response_1.ubody
 
 
-# def test_create_journal_nav_tab_after_login(testapp, login):
-#     """Test login in tab appears after you logged in."""
-#     login
-#     response = testapp.get('/')
-#     assert 'New Post' in response.ubody and 'Logout' in response.ubody
-#     testapp.post('/logout')
+def test_both_auth_and_unauth_user_can_access_detail_pg(testapp, login, logout):
+    """Test whether both authorized and unauthroized user can access a detail route."""
+    response = testapp.get('/journal/5')
+    logout
+    response_1 = testapp.get('/journal/5')
+    assert 'ID: 5' in response.ubody and response_1.ubody
 
 
-# def test_both_auth_and_unauth_user_can_access_home_pg(testapp, login):
-#     """Test whether an authorized and an unauthorized user can access home route."""
-#     login
-#     response = testapp.get('/')
-#     testapp.post('/logout')
-#     response_1 = testapp.get('/')
-#     assert 'Han\'s Blog' in response.ubody and response_1.ubody
+def test_wrong_password_wont_login(testapp):
+    """Test if we can login with a wrong password."""
+    response = testapp.post('/login', {'username': 'hbao', 'password': 'notmypassword'})
+    assert 'Error: Username/Password does not match!' in response
 
 
-# def test_both_auth_and_unauth_user_can_access_detail_pg(testapp, login):
-#     """Test whether both authorized and unauthroized user can access a detail route."""
-#     login
-#     response = testapp.get('/journal/5')
-#     testapp.post('/logout')
-#     response_1 = testapp.get('/journal/5')
-#     assert 'ID: 5' in response.ubody and response_1.ubody
+def test_wrong_username_wont_login(testapp):
+    """Test if we can login with a wrong username."""
+    response = testapp.post('/login', {'username': 'notmyusername', 'password': 'secret'})
+    assert 'Error: Username/Password does not match!' in response
 
-
-# def test_ability_to_edit_without_csrf_token(testapp, login):
-#     """Test to make sure post request from edit route is not valid without CSRF token."""
-#     login
-#     response = testapp.get('/journal/new-entry')
