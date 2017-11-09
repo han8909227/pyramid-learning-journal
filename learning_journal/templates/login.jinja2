@@ -3,6 +3,8 @@
 {% extends "HB-mockups/layout.jinja2" %}
 {% block content %}
    <form id='login' method="POST">
+    <input type="hidden" name="csrf_token" value="{{ request.session.get_csrf_token() }}">
+
     <div class="form-group">
       <input class="form-control" name="username"  type="text" placeholder="Enter Username"></input>
     </div>
