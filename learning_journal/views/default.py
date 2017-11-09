@@ -94,7 +94,8 @@ def delete_expense(request):
 
 @view_config(route_name='login',
              renderer='learning_journal:templates/login.jinja2',
-             permission=NO_PERMISSION_REQUIRED)
+             permission=NO_PERMISSION_REQUIRED,
+             require_csrf=False)
 def login(request):
     """Login route config function."""
     if request.authenticated_userid:
