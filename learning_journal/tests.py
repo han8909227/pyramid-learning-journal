@@ -22,8 +22,7 @@ def test_list_view_content():
     """Assert the content for response contains corresponding body."""
     req = DummyRequest()
     response = list_view(req)
-    with open('learning_journal/templates/HB-mockups/index.html', 'r') as fn:
-        assert response.body == fn.read()
+    assert 'Home Page' in response.body
 
 
 def test_detail_view_return_response_obj():
@@ -44,8 +43,7 @@ def test_detail_view_content():
     """."""
     req = DummyRequest()
     response = detail_view(req)
-    with open('learning_journal/data/entry.html', 'r') as fn:
-        assert response.body == fn.read()
+    assert 'View single entry' in response.ubody
 
 
 def test_create_view_return_response_obj():
@@ -66,8 +64,7 @@ def test_create_view_content():
     """."""
     req = DummyRequest()
     response = create_view(req)
-    with open('learning_journal/templates/HB-mockups/create.html', 'r') as fn:
-        assert response.body == fn.read()
+    assert 'Creating a New Entry' in response.ubody
 
 
 def test_update_view_return_response_obj():
@@ -88,5 +85,4 @@ def test_update_view_content():
     """."""
     req = DummyRequest()
     response = update_view(req)
-    with open('learning_journal/templates/HB-mockups/edit.html', 'r') as fn:
-        assert response.body == fn.read()
+    assert 'Edit an entry' in response.ubody

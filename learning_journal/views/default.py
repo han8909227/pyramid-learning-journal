@@ -1,3 +1,4 @@
+"""Default view handling."""
 from pyramid.response import Response
 
 
@@ -20,7 +21,7 @@ def create_view(request):
 
 
 def detail_view(request):
-    """."""
+    """Return the detail view html."""
     with open('learning_journal/data/entry.html', 'r') as fn:
         return Response(fn.read())
 
