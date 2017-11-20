@@ -6,6 +6,7 @@ click==6.7
 cookiecutter==1.6.0
 decorator==4.1.2
 future==0.16.0
+faker == 0.8.6
 hupper==1.0
 idna==2.6
 ipython==6.2.1
@@ -32,6 +33,8 @@ pyramid-mako==1.0.2
 pyramid-retry==0.5
 pyramid-tm==2.2
 python-dateutil==2.6.1
+psycopg2 == 2.7.3
+pytest == 3.2.3
 repoze.lru==0.7
 requests==2.18.4
 simplegeneric==0.8.1
@@ -40,12 +43,14 @@ SQLAlchemy==1.1.14
 traitlets==4.3.2
 transaction==2.1.2
 translationstring==1.3
+tox == 2.9.1
 urllib3==1.22
 venusian==1.1.0
 waitress==1.1.0
 wcwidth==0.1.7
 WebOb==1.7.3
 whichcraft==0.4.1
+webtest == 2.0.29
 zope.deprecation==4.3.0
 zope.interface==4.4.3
 zope.sqlalchemy==0.7.7
