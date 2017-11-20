@@ -28,4 +28,3 @@ class MyModel(Base):
             'body': self.body,
             'creation_date': self.creation_date.strftime('%m/%d/%Y')
         }
-# Index('my_index', MyModel.name, unique=True, mysql_length=255)
