@@ -4,6 +4,8 @@ Pyramid Learning Journal
 Getting Started
 ---------------
 
+- Deployed Site[https://thawing-ocean-94459.herokuapp.com]
+
 - Change directory into your newly created project.
 
     cd learning_journal

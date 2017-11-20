@@ -22,7 +22,7 @@ def test_list_view_content():
     """Assert the content for response contains corresponding body."""
     req = DummyRequest()
     response = list_view(req)
-    assert 'Home Page' in response.body
+    assert 'Home Page' in response.ubody
 
 
 def test_detail_view_return_response_obj():

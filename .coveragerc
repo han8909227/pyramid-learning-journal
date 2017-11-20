@@ -1,0 +1,9 @@
+[run]
+source = pyramid-learnning-journal
+
+omit =
+    pyramid-learning-journal.HB-mockups
+
+
+[report]
+show_missing = True
