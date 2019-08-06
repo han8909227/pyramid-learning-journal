@@ -1,0 +1,29 @@
+
+
+{% extends "layout.jinja2" %}
+
+{% block content %}
+    <article>
+      <div class="page-header">
+        <h1>Create New Journal</h1>
+      </div>
+      <form method="POST">
+        <input type="hidden" name="csrf_token" value="{{ request.session.get_csrf_token() }}">
+        <div class="form-group">
+          <label for="title">Title</label>
+          <textarea class="form-control" name="title" rows="1" required></textarea>
+        </div>
+        <div class="form-group">
+          <label for="body">Article Body</label>
+          <textarea class="form-control" name="body" rows="3" required></textarea>
+        </div>
+
+        <div class="form-group">
+          <label for="creation_date">Journal Date</label>
+          <input type="date" name="creation_date" Journal Datemm/dd/yyyy" required/>
+        </div>
+        <input type="submit" class="btn btn-primary" value="Submit New Journal"></input>
+
+      </form>
+    </article>
+{% endblock %}

@@ -1,4 +1,4 @@
-# pyramid-learning-journal
+Pyramid Learning Journal
 ========================
 
 **Authors** [Han Bao](https://github.com/han8909227) , Darren Haynes
@@ -44,11 +44,4 @@ To run the project
     env/bin/pserve development.ini
 
 ```
-## To Test
-
-If you have the testing extras installed, testing is simple. If you're in the same directory as `setup.py` type the following:
-
-```
-$ py.test
-
 

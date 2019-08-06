@@ -1,0 +1,20 @@
+
+
+{% extends "layout.jinja2" %}
+
+{% block content %}
+    <main class="article-list">
+      <div class="page-header">
+        <h1>Blog Posts</h1>
+      </div>
+      {% for journal in journal %}
+        <div class="card">
+          <div class="card-body">
+            <h4 class="card-title">{{ journal.title|upper }}</h4>
+            <p class="card-text">{{ journal.body }}</p>
+            <a href="{{ request.route_url('detail_view', id=journal.id) }}" class="btn btn-primary">Details</a>
+          </div>
+        </div>
+      {% endfor %}
+    </main>
+{% endblock %}
